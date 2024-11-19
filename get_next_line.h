@@ -6,7 +6,7 @@
 /*   By: loremipsum <loremipsum@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/29 21:21:05 by hirwatan          #+#    #+#             */
-/*   Updated: 2024/11/19 14:40:02 by loremipsum       ###   ########.fr       */
+/*   Updated: 2024/11/19 16:34:22 by loremipsum       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@
 # include <stdlib.h>
 # include <unistd.h>
 
-// # define FD_MAX 1024 + 1
+# define FD_MAX 1024
 
 // typedef struct
 // {
@@ -30,7 +30,10 @@
 // 	size_t	capa;//確保した領域の長さ
 // }			t_string;
 
-char		*ft_read_line(int fd);
-char		*get_next_line(int fd);
+//util
+size_t ft_strlen(const char *s);
+char *ft_strdup(const char *s);
+char *ft_strjoin(char const *s1, char const *s2);
+void	ft_bzero(void *s, size_t n);
 
 #endif

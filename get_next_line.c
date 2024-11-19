@@ -6,7 +6,7 @@
 /*   By: loremipsum <loremipsum@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/29 21:21:09 by hirwatan          #+#    #+#             */
-/*   Updated: 2024/11/19 14:43:23 by loremipsum       ###   ########.fr       */
+/*   Updated: 2024/11/19 16:35:35 by loremipsum       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,28 +15,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-char *ft_strdup(const char *s)
-{
-	char *dest;
-	char *start;
-	size_t i;
-
-	i = 0;
-	while(s[i] != '\0')
-		i++;
-	dest = (char *)malloc(i + 1);
-	if (!dest)
-		return (NULL);
-	start = dest;
-	while (*s)
-	{
-		*dest = *s;
-		dest++;
-		s++;
-	}
-	*dest = '\0';
-	return (start);
-}
 int find_new_line(char *str)
 {
 	if (!str)
@@ -48,35 +26,6 @@ int find_new_line(char *str)
 		str++;
 	}
 	return (0);
-}
-
-char *ft_strjoin(char const *s1, char const *s2)
-{
-	char *dest;
-	size_t i;
-	size_t j;
-
-	if (!s1 || !s2)
-		return (NULL);
-	dest = malloc(ft_strlen(s1) + ft_strlen(s2) + 1);
-	if (!dest)
-		return (NULL);
-	i = 0;
-	while (s1[i] != '\0')
-	{
-		dest[i] = s1[i];
-		i++;
-	}
-	j = 0;
-	while (s2[j] != '\0')
-	{
-		dest[i + j] = s2[j];
-		j++;
-	}
-	dest[i + j] = '\0';
-	free(s1);
-	free(s2);
-	return (dest);
 }
 
 char *left_over(char *str)
@@ -134,8 +83,9 @@ char *get_next_line(int fd)
 	int byte_lead;		 // 読み込んだ数
 	char *buf;			 // 残りと結合　+ 読むやつ
 	static char *buffer; // nokori
-	char *line;			 //
+	char *line[FD_MAX];	 //
 
+	ft_bzero(line, FD_MAX);
 	if (!(buf = (char *)malloc(sizeof(char) * (BUFFER_SIZE + 1))))
 		return (NULL); // bufに入れる
 	while (!find_new_line(buf))
@@ -166,5 +116,5 @@ char *get_next_line(int fd)
 	else
 		line = NULL;
 	free(buf);
-	return (NULL);
+	return (line);
 }
