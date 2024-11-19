@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   get_next_line.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hirwatan <hirwatan@student.42tokyo.jp>     +#+  +:+       +#+        */
+/*   By: loremipsum <loremipsum@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/29 21:21:09 by hirwatan          #+#    #+#             */
-/*   Updated: 2024/11/17 19:19:43 by hirwatan         ###   ########.fr       */
+/*   Updated: 2024/11/19 14:43:23 by loremipsum       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,11 +15,46 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-char	*ft_strjoin(char const *s1, char const *s2)
+char *ft_strdup(const char *s)
 {
-	char	*dest;
-	size_t	i;
-	size_t	j;
+	char *dest;
+	char *start;
+	size_t i;
+
+	i = 0;
+	while(s[i] != '\0')
+		i++;
+	dest = (char *)malloc(i + 1);
+	if (!dest)
+		return (NULL);
+	start = dest;
+	while (*s)
+	{
+		*dest = *s;
+		dest++;
+		s++;
+	}
+	*dest = '\0';
+	return (start);
+}
+int find_new_line(char *str)
+{
+	if (!str)
+		return (0);
+	while (*str != '\0')
+	{
+		if (*str == '\n')
+			return (1);
+		str++;
+	}
+	return (0);
+}
+
+char *ft_strjoin(char const *s1, char const *s2)
+{
+	char *dest;
+	size_t i;
+	size_t j;
 
 	if (!s1 || !s2)
 		return (NULL);
@@ -39,14 +74,16 @@ char	*ft_strjoin(char const *s1, char const *s2)
 		j++;
 	}
 	dest[i + j] = '\0';
+	free(s1);
+	free(s2);
 	return (dest);
 }
 
-char	*left_over(char *str)
+char *left_over(char *str)
 {
-	size_t	i;
-	size_t	j;
-	char	*new_str;
+	size_t i;
+	size_t j;
+	char *new_str;
 
 	i = 0;
 	j = 0;
@@ -68,10 +105,10 @@ char	*left_over(char *str)
 	return (new_str);
 }
 
-char	return_line(char *str)
+char *return_line(char *str)
 {
-	char	*dest;
-	size_t	i;
+	char *dest;
+	size_t i;
 
 	if (!str)
 		return (NULL);
@@ -91,33 +128,43 @@ char	return_line(char *str)
 	return (dest);
 }
 
-char	*get_next_line(int fd)
+char *get_next_line(int fd)
 {
-	static char *stack[FD_MAX];
-	int byte_lead;
-	char *buf[BUFFER_SIZE + 1]; //残りと結合　+ 読むやつ
-	char *buffer;               // nokori
-	char *line;                 //返すやつ
+	// static char *stack[FD_MAX];	//残っている
+	int byte_lead;		 // 読み込んだ数
+	char *buf;			 // 残りと結合　+ 読むやつ
+	static char *buffer; // nokori
+	char *line;			 //
 
-	byte_lead = read(fd, buf, BUFFER_SIZE);
-	if (byte_lead < 0)
+	if (!(buf = (char *)malloc(sizeof(char) * (BUFFER_SIZE + 1))))
+		return (NULL); // bufに入れる
+	while (!find_new_line(buf))
 	{
-		free(buf);
-		return (NULL);
+		byte_lead = read(fd, buf, BUFFER_SIZE);
+		if (byte_lead < 0)
+		{
+			free(buf);
+			free(buffer);
+			return (NULL);
+		}
+		if (byte_lead == 0) // EOFの場合
+			break;
+		buf[byte_lead] = '\0';
+		buffer = ft_strjoin(buffer, buf);
 	}
-	buf[BUFFER_SIZE] = '\0';
-
-	// if(stack[fd])
-	// {
-	// 	temp = ft_strjoin(stack[fd], heap);
-	// 	free(stack[fd]);
-	// }
-	// else
-	if (find_new_line(buf))
+	if (find_new_line(buffer))
 	{
-		line = return_line(buf);
-		buffer = left_over(buf);
-		return (line);
+		line = return_line(buffer);
+		buffer = left_over(buffer);
 	}
+	else if (*buffer)
+	{
+		line = ft_strdup(buffer); // 残ったデータ全体を返す
+		free(buffer);
+		buffer = NULL;
+	}
+	else
+		line = NULL;
+	free(buf);
 	return (NULL);
 }
