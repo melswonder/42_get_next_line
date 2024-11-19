@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   get_next_line_utils.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: loremipsum <loremipsum@student.42.fr>      +#+  +:+       +#+        */
+/*   By: hirwatan <hirwatan@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/19 14:47:36 by loremipsum        #+#    #+#             */
-/*   Updated: 2024/11/19 16:35:36 by loremipsum       ###   ########.fr       */
+/*   Updated: 2024/11/19 20:09:17 by hirwatan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,18 +64,18 @@ char *ft_strjoin(char const *s1, char const *s2)
     dest[i + j] = '\0';
     return (dest);
 }
-void ft_bzero(void *s, size_t n)
-{
-    unsigned char *p;
-    int i;
+// void ft_bzero(void *s, size_t n)
+// {
+//     unsigned char *p;
+//     int i;
 
-    i = 0;
-    p = (unsigned char *)s;
-    if (n == 0 || !s)
-        return;
-    while (n--)
-    {
-        p[i] = '\0';
-        i++;
-    }
-}
+//     i = 0;
+//     p = (unsigned char *)s;
+//     if (n == 0 || !s)
+//         return;
+//     while (n--)
+//     {
+//         p[i] = '\0';
+//         i++;
+//     }
+// }

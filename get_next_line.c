@@ -6,7 +6,7 @@
 /*   By: hirwatan <hirwatan@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/29 21:21:09 by hirwatan          #+#    #+#             */
-/*   Updated: 2024/11/19 20:04:35 by hirwatan         ###   ########.fr       */
+/*   Updated: 2024/11/19 20:27:13 by hirwatan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,8 +68,13 @@ char	*return_line(char *str)
 	if (!dest)
 		return (NULL);
 	i = 0;
-	while (str[i] != '\n')
+	while (str[i] != '\0')
 	{
+		if(str[i] != '\n')
+		{
+			dest[i++] = '\n';
+			break;	
+		}
 		dest[i] = str[i];
 		i++;
 	}
@@ -85,7 +90,6 @@ char	*get_next_line(int fd)
 	char *buf;           // 残りと結合　+ 読むやつ
 	static char *buffer; // nokori
 	char *line;        //ポインタと配列の違いと　ポインタ配列　宣言の意味 そもそも配列がポインタなのか　malloc
-	ft_bzero(line, FD_MAX);
 	if (!(buf = (char *)malloc(sizeof(char) * (BUFFER_SIZE + 1))))
 		return (NULL); // bufに入れる
 	while (!find_new_line(buf))
@@ -104,17 +108,24 @@ char	*get_next_line(int fd)
 	}
 	if (find_new_line(buffer))
 	{
-		*line = return_line(buffer);
+		line = return_line(buffer);
 		buffer = left_over(buffer);
 	}
-	else if (*buffer)
+	else if (buffer[0])
 	{
-		*line = ft_strdup(buffer); // 残ったデータ全体を返す
+		line = ft_strdup(buffer); // 残ったデータ全体を返す
 		free(buffer);
 		buffer = NULL;
 	}
 	else
-		*line = NULL;
+		line = NULL;
 	free(buf);
-	return (&line);
+	return (line);
+}
+int main(void)
+{
+	int fd;
+	fd = open("test.txt",O_RDONLY);
+	printf("%s",get_next_line(fd));
+	
 }
