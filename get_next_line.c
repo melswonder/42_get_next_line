@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   get_next_line.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: loremipsum <loremipsum@student.42.fr>      +#+  +:+       +#+        */
+/*   By: hirwatan <hirwatan@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/29 21:21:09 by hirwatan          #+#    #+#             */
-/*   Updated: 2024/11/19 16:35:35 by loremipsum       ###   ########.fr       */
+/*   Updated: 2024/11/19 20:04:35 by hirwatan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-int find_new_line(char *str)
+int	find_new_line(char *str)
 {
 	if (!str)
 		return (0);
@@ -28,11 +28,11 @@ int find_new_line(char *str)
 	return (0);
 }
 
-char *left_over(char *str)
+char	*left_over(char *str)
 {
-	size_t i;
-	size_t j;
-	char *new_str;
+	size_t	i;
+	size_t	j;
+	char	*new_str;
 
 	i = 0;
 	j = 0;
@@ -54,10 +54,10 @@ char *left_over(char *str)
 	return (new_str);
 }
 
-char *return_line(char *str)
+char	*return_line(char *str)
 {
-	char *dest;
-	size_t i;
+	char	*dest;
+	size_t	i;
 
 	if (!str)
 		return (NULL);
@@ -73,18 +73,18 @@ char *return_line(char *str)
 		dest[i] = str[i];
 		i++;
 	}
+	// dest[i++] = '\n'; // 改行がないときに改行が追加されてしまう
 	dest[i] = '\0';
 	return (dest);
 }
 
-char *get_next_line(int fd)
+char	*get_next_line(int fd)
 {
 	// static char *stack[FD_MAX];	//残っている
-	int byte_lead;		 // 読み込んだ数
-	char *buf;			 // 残りと結合　+ 読むやつ
+	int byte_lead;       // 読み込んだ数
+	char *buf;           // 残りと結合　+ 読むやつ
 	static char *buffer; // nokori
-	char *line[FD_MAX];	 //
-
+	char *line;        //ポインタと配列の違いと　ポインタ配列　宣言の意味 そもそも配列がポインタなのか　malloc
 	ft_bzero(line, FD_MAX);
 	if (!(buf = (char *)malloc(sizeof(char) * (BUFFER_SIZE + 1))))
 		return (NULL); // bufに入れる
@@ -98,23 +98,23 @@ char *get_next_line(int fd)
 			return (NULL);
 		}
 		if (byte_lead == 0) // EOFの場合
-			break;
+			break ;
 		buf[byte_lead] = '\0';
 		buffer = ft_strjoin(buffer, buf);
 	}
 	if (find_new_line(buffer))
 	{
-		line = return_line(buffer);
+		*line = return_line(buffer);
 		buffer = left_over(buffer);
 	}
 	else if (*buffer)
 	{
-		line = ft_strdup(buffer); // 残ったデータ全体を返す
+		*line = ft_strdup(buffer); // 残ったデータ全体を返す
 		free(buffer);
 		buffer = NULL;
 	}
 	else
-		line = NULL;
+		*line = NULL;
 	free(buf);
-	return (line);
+	return (&line);
 }

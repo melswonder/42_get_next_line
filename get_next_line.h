@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   get_next_line.h                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: loremipsum <loremipsum@student.42.fr>      +#+  +:+       +#+        */
+/*   By: hirwatan <hirwatan@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/29 21:21:05 by hirwatan          #+#    #+#             */
-/*   Updated: 2024/11/19 16:34:22 by loremipsum       ###   ########.fr       */
+/*   Updated: 2024/11/19 18:01:52 by hirwatan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,14 +14,14 @@
 # define GET_NEXT_LINE_H
 
 # ifndef BUFFER_SIZE
-#  define BUFFER_SIZE
+#  define BUFFER_SIZE 10
 # endif
 
 # include <stdbool.h>
 # include <stdlib.h>
 # include <unistd.h>
 
-# define FD_MAX 1024
+# define FD_MAX 20000000
 
 // typedef struct
 // {
