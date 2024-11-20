@@ -6,7 +6,7 @@
 /*   By: hirwatan <hirwatan@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/19 14:47:36 by loremipsum        #+#    #+#             */
-/*   Updated: 2024/11/20 13:01:32 by hirwatan         ###   ########.fr       */
+/*   Updated: 2024/11/20 17:27:07 by hirwatan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,4 +63,19 @@ char *ft_strjoin(char const *s1, char const *s2)
     }
     dest[i + j] = '\0';
     return (dest);
+}
+void	ft_bzero(void *s, size_t n)
+{
+	unsigned char *p;
+	int i;
+
+	i = 0;
+	p = (unsigned char *)s;
+	if (n == 0 || !s)
+		return ;
+	while (n--)
+	{
+		p[i] = '\0';
+		i++;
+	}
 }
