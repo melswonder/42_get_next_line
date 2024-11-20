@@ -6,7 +6,7 @@
 /*   By: hirwatan <hirwatan@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/29 21:21:09 by hirwatan          #+#    #+#             */
-/*   Updated: 2024/11/19 20:27:13 by hirwatan         ###   ########.fr       */
+/*   Updated: 2024/11/20 14:08:58 by hirwatan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,7 +43,7 @@ char	*left_over(char *str)
 		free(str);
 		return (NULL);
 	}
-	new_str = (char *)malloc(ft_strlen(str + i + 1) + 1);
+	new_str = (char *)malloc(ft_strlen(str + i) + 1);
 	if (!new_str)
 		return (NULL);
 	i++;
@@ -64,16 +64,16 @@ char	*return_line(char *str)
 	i = 0;
 	while (str[i] != '\n')
 		i++;
-	dest = (char *)malloc(sizeof(char) * (i + 1));
+	dest = (char *)malloc(sizeof(char) * (i + 2)); //改行とnull文字
 	if (!dest)
 		return (NULL);
 	i = 0;
 	while (str[i] != '\0')
 	{
-		if(str[i] != '\n')
+		if (str[i] != '\n')
 		{
-			dest[i++] = '\n';
-			break;	
+			dest[i] = '\n';
+			break ;
 		}
 		dest[i] = str[i];
 		i++;
@@ -86,25 +86,31 @@ char	*return_line(char *str)
 char	*get_next_line(int fd)
 {
 	// static char *stack[FD_MAX];	//残っている
-	int byte_lead;       // 読み込んだ数
-	char *buf;           // 残りと結合　+ 読むやつ
-	static char *buffer; // nokori
-	char *line;        //ポインタと配列の違いと　ポインタ配列　宣言の意味 そもそも配列がポインタなのか　malloc
-	if (!(buf = (char *)malloc(sizeof(char) * (BUFFER_SIZE + 1))))
+	int byte_lead = 0;       // 読み込んだ数
+	char *buf = NULL;           // 残りと結合　+ 読むやつ
+	static char *buffer = NULL; // nokori
+	char *line = NULL;          //ポインタと配列の違いと　ポインタ配列　宣言の意味 そもそも配列がポインタなのか　malloc
+	
+	if (fd < 0 || BUFFER_SIZE <= 0)
+		return(null);
+	buf = (char *)malloc(sizeof(char) * (BUFFER_SIZE + 1));
+	if (!buf)
 		return (NULL); // bufに入れる
+	byte_lead = read(fd, buf, BUFFER_SIZE);
+	if (byte_lead < 0)
+	{
+		free(buf);
+		free(buffer);
+		return (NULL);
+	}
 	while (!find_new_line(buf))
 	{
-		byte_lead = read(fd, buf, BUFFER_SIZE);
-		if (byte_lead < 0)
-		{
-			free(buf);
-			free(buffer);
-			return (NULL);
-		}
 		if (byte_lead == 0) // EOFの場合
 			break ;
 		buf[byte_lead] = '\0';
 		buffer = ft_strjoin(buffer, buf);
+		free (buf);
+		buf = NULL;
 	}
 	if (find_new_line(buffer))
 	{
@@ -120,12 +126,21 @@ char	*get_next_line(int fd)
 	else
 		line = NULL;
 	free(buf);
+	buf = NULL;
 	return (line);
 }
-int main(void)
+int	main(void)
 {
 	int fd;
-	fd = open("test.txt",O_RDONLY);
-	printf("%s",get_next_line(fd));
+	char *line;
+
 	
+	fd = open("test.txt", O_RDONLY);
+	line = (char*)1;
+	while (line)
+	{
+		line = get_next_line(fd);
+		printf("%s",line);
+		free(line);	
+	} 
 }
