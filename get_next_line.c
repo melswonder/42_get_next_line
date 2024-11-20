@@ -6,7 +6,7 @@
 /*   By: hirwatan <hirwatan@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/29 21:21:09 by hirwatan          #+#    #+#             */
-/*   Updated: 2024/11/20 17:52:21 by hirwatan         ###   ########.fr       */
+/*   Updated: 2024/11/20 22:54:20 by hirwatan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,10 +81,12 @@ char	*return_line(char *str)
 
 char	*get_next_line(int fd)
 {
-	char	*line;// static char *stack[FD_MAX];	//残っている
-	int byte_lead = 0;   // 読み込んだ数
-	char *buf;           // 残りと結合　+ 読むやつ
-	static char *buffer; // nokori
+	char	*temp;
+
+	char *line;                 // static char *stack[FD_MAX];	//残っている
+	int byte_lead;              // 読み込んだ数
+	static char *buf;                  // 残りと結合　+ 読むやつ
+	static char *buffer = NULL; // nokori
 	//ポインタと配列の違いと　ポインタ配列　宣言の意味 そもそも配列がポインタなのか　malloc
 	if (fd < 0 || BUFFER_SIZE <= 0) //無効なのを検索
 		return (NULL);
@@ -92,8 +94,6 @@ char	*get_next_line(int fd)
 	if (!buf)
 		return (NULL); // bufに入れる
 	byte_lead = 1;     //ループ会しよう
-	if (!buffer)
-		buffer = ft_strdup("");
 	while (!find_new_line(buffer) && byte_lead > 0)
 	{
 		byte_lead = read(fd, buf, BUFFER_SIZE);
@@ -101,15 +101,18 @@ char	*get_next_line(int fd)
 		{
 			free(buf);
 			free(buffer);
+			buffer = NULL; //二重開防止
 			return (NULL);
 		}
 		buf[byte_lead] = '\0';
+		temp = buffer;
 		buffer = ft_strjoin(buffer, buf);
+		free(temp);
 		if (!buffer)
 			break ;
 	}
 	free(buf);
-	if (!buffer || buffer[0] == '\0')
+	if (byte_lead == 0 && (!buffer || buffer[0] == '\0'))
 	{
 		free(buffer);
 		buffer = NULL;
@@ -119,17 +122,17 @@ char	*get_next_line(int fd)
 	buffer = left_over(buffer);
 	return (line);
 }
-int	main(void)
-{
-	int fd;
-	char *line;
+// int	main(void)
+// {
+// 	int fd;
+// 	char *line;
 
-	fd = open("test.txt", O_RDONLY);
-	line = (char *)1;
-	while (line)
-	{
-		line = get_next_line(fd);
-		printf("%s", line);
-		free(line);
-	}
-}
+// 	fd = open("test.txt", O_RDONLY);
+// 	line = (char *)1;
+// 	while ((line = get_next_line(fd)) != NULL)
+// 	{
+// 		printf("%s", line);
+// 		free(line);
+// 	}
+// 	close(fd);
+// }
