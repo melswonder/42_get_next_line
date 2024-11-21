@@ -6,7 +6,7 @@
 /*   By: hirwatan <hirwatan@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/29 21:21:09 by hirwatan          #+#    #+#             */
-/*   Updated: 2024/11/20 22:54:20 by hirwatan         ###   ########.fr       */
+/*   Updated: 2024/11/21 14:48:49 by hirwatan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,7 +46,7 @@ char	*left_over(char *str)
 	new_str = (char *)malloc(ft_strlen(str + i) + 1);
 	if (!new_str)
 		return (NULL);
-	i++; //改行の次の文字からコピー
+	i++;
 	while (str[i] != '\0')
 		new_str[j++] = str[i++];
 	new_str[j] = '\0';
@@ -64,7 +64,7 @@ char	*return_line(char *str)
 	i = 0;
 	while (str[i] != '\n' && str[i] != '\0')
 		i++;
-	dest = (char *)malloc(sizeof(char) * (i + 2)); //改行とnull文字
+	dest = (char *)malloc(sizeof(char) * (i + 2));
 	if (!dest)
 		return (NULL);
 	i = 0;
@@ -79,21 +79,16 @@ char	*return_line(char *str)
 	return (dest);
 }
 
-char	*get_next_line(int fd)
+char	*read_and_append(int fd, char *buffer)
 {
+	char	*buf;
 	char	*temp;
+	int		byte_lead;
 
-	char *line;                 // static char *stack[FD_MAX];	//残っている
-	int byte_lead;              // 読み込んだ数
-	static char *buf;                  // 残りと結合　+ 読むやつ
-	static char *buffer = NULL; // nokori
-	//ポインタと配列の違いと　ポインタ配列　宣言の意味 そもそも配列がポインタなのか　malloc
-	if (fd < 0 || BUFFER_SIZE <= 0) //無効なのを検索
-		return (NULL);
 	buf = (char *)malloc(sizeof(char) * (BUFFER_SIZE + 1));
 	if (!buf)
-		return (NULL); // bufに入れる
-	byte_lead = 1;     //ループ会しよう
+		return (NULL);
+	byte_lead = 1;
 	while (!find_new_line(buffer) && byte_lead > 0)
 	{
 		byte_lead = read(fd, buf, BUFFER_SIZE);
@@ -101,7 +96,6 @@ char	*get_next_line(int fd)
 		{
 			free(buf);
 			free(buffer);
-			buffer = NULL; //二重開防止
 			return (NULL);
 		}
 		buf[byte_lead] = '\0';
@@ -111,8 +105,20 @@ char	*get_next_line(int fd)
 		if (!buffer)
 			break ;
 	}
-	free(buf);
-	if (byte_lead == 0 && (!buffer || buffer[0] == '\0'))
+	return (free(buf), buffer);
+}
+
+char	*get_next_line(int fd)
+{
+	char		*line;
+	static char	*buffer = NULL;
+
+	if (fd < 0 || BUFFER_SIZE <= 0)
+		return (NULL);
+	buffer = read_and_append(fd, buffer);
+	if (!buffer)
+		return (NULL);
+	if (!buffer[0])
 	{
 		free(buffer);
 		buffer = NULL;
@@ -122,6 +128,7 @@ char	*get_next_line(int fd)
 	buffer = left_over(buffer);
 	return (line);
 }
+
 // int	main(void)
 // {
 // 	int fd;
